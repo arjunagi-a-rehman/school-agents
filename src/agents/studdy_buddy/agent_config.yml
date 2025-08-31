@@ -3,3 +3,16 @@ agent:
   description: "A friendly, encouraging, and knowledgeable assistant for students"
   model: "gemini-2.5-flash"
   prompt_file: "prompts/study_buddy_prompt.md"
+
+tools:
+  - name: "calculator"
+    description: "Advanced mathematical calculator for performing calculations including arithmetic, trigonometry, statistics, geometry, algebra, and more."
+    module: "tools.calculator"
+    class: "CalculatorTool"
+  - name: "calculator_help"
+    description: "Get help and examples for using the calculator tool."
+    module: "tools.calculator"
+    class: "CalculatorHelpTool"
+  - name: "google_search"
+    description: "Search Google for current affairs, recent developments, or information that might not be in training data."
+    builtin: "google_search"
