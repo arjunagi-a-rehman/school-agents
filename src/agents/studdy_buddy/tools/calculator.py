@@ -268,6 +268,8 @@ class AdvancedCalculator:
         
         # Convert common mathematical notation to Python syntax
         expression = expression.replace('^', '**')  # Convert ^ to ** for exponentiation
+        expression = expression.replace('[', '(')   # Convert [ to ( for grouping
+        expression = expression.replace(']', ')')   # Convert ] to ) for grouping
         
         # Replace functions with math module equivalents
         expression = re.sub(r'\bsin\(', 'math.sin(', expression)
@@ -277,10 +279,11 @@ class AdvancedCalculator:
         expression = re.sub(r'\blog\(', 'math.log(', expression)
         expression = re.sub(r'\babs\(', 'abs(', expression)
         
-        # Safety check - only allow safe operations (including ^ now converted to **)
+        # Safety check - only allow safe operations 
+        # Note: [] and ^ are converted above, so they should be () and ** by now
         allowed_chars = set('0123456789+-*/().,abcdefghijklmnopqrstuvwxyz_')
         if not all(c.lower() in allowed_chars or c.isspace() for c in expression):
-            raise ValueError("Expression contains invalid characters")
+            raise ValueError(f"Expression contains invalid characters: '{expression}'")
         
         try:
             # Use eval with restricted globals for safety
