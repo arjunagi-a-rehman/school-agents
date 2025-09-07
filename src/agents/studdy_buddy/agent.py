@@ -2,6 +2,34 @@ import os
 from pathlib import Path
 import yaml
 from google.adk import Agent
+from google.adk.tools import google_search
+
+# Import student management tools
+from .tools.student_manager import (
+    get_student_profile,
+    update_student_info,
+    add_subject,
+    update_learning_preferences,
+    record_study_session,
+    add_goal,
+    complete_goal,
+    get_progress_summary,
+    add_notes,
+    get_recent_sessions,
+    # Weak topics management
+    add_weak_topic,
+    update_weak_topic_review,
+    remove_weak_topic,
+    get_weak_topics_summary
+)
+
+# Import math visualization tools  
+from .tools.math_visualizer import (
+    draw_geometric_shape,
+    plot_function,
+    create_coordinate_system,
+    visualize_trigonometry
+)
 
 
 def load_agent_config(config_path: str) -> dict:
@@ -34,7 +62,31 @@ def create_study_buddy_agent() -> Agent:
         name=config['agent']['name'],
         description=config['agent']['description'],
         model=config['agent']['model'],
-        instruction=instruction
+        instruction=instruction,
+        tools=[
+            # Student management tools
+            get_student_profile,
+            update_student_info,
+            add_subject,
+            update_learning_preferences,
+            record_study_session,
+            add_goal,
+            complete_goal,
+            get_progress_summary,
+            add_notes,
+            get_recent_sessions,
+            # Weak topics management
+            add_weak_topic,
+            update_weak_topic_review,
+            remove_weak_topic,
+            get_weak_topics_summary,
+            # Math visualization tools
+            draw_geometric_shape,
+            plot_function,
+            create_coordinate_system,
+            visualize_trigonometry
+        ],
+        
     )
     
     return agent

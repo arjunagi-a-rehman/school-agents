@@ -1,0 +1,29 @@
+{
+  "student_id": "student_001",
+  "name": "Xander",
+  "email": "",
+  "grade_level": "",
+  "subjects": [],
+  "learning_preferences": {
+    "learning_style": "",
+    "difficulty_level": "intermediate",
+    "preferred_topics": []
+  },
+  "progress": {
+    "total_sessions": 0,
+    "subjects_studied": {},
+    "achievements": [],
+    "study_streak": 0,
+    "last_study_date": null
+  },
+  "weak_topics": {
+    "struggling_areas": [],
+    "needs_review": [],
+    "improvement_needed": {}
+  },
+  "session_history": [],
+  "goals": [],
+  "notes": "",
+  "created_at": "2025-09-07T17:45:51.749022",
+  "updated_at": "2025-09-07T17:45:51.749028"
+}

@@ -2,4 +2,4 @@ agent:
   name: "study_buddy"
   description: "A friendly, encouraging, and knowledgeable assistant for students"
   model: "gemini-2.5-flash"
-  prompt_file: "prompts/study_buddy_prompt.md"
+  prompt_file: "prompts/studdy_buddy_notepad.md"
