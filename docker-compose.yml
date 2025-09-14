@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  studybuddy:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      # Add your Google API key here or use .env file
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_GENAI_USE_VERTEXAI=FALSE
+    volumes:
+      # Mount source code for development (remove for production)
+      - ./src:/app/src:ro
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Optional: Add Redis for persistent session storage in production
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   restart: unless-stopped
+
+# volumes:
+#   redis_data:
