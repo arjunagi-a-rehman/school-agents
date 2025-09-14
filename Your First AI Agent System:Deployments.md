@@ -620,18 +620,18 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
-COPY pyproject.toml uv.lock ./
-
 # Install UV package manager for faster dependency resolution
 RUN pip install uv
 
-# Install dependencies using UV
-RUN uv sync --frozen
+# Copy dependency files
+COPY pyproject.toml uv.lock ./
 
 # Copy application source code
 COPY src/ ./src/
 COPY .env* ./
+
+# Install dependencies globally (no virtual environment needed in container)
+RUN uv pip install --system fastapi uvicorn[standard] pydantic python-dotenv google-adk matplotlib numpy python-multipart
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' appuser && \

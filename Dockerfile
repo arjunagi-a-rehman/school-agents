@@ -15,18 +15,13 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
-COPY pyproject.toml uv.lock ./
-
-# Install UV package manager for faster dependency resolution
-RUN pip install uv
-
-# Install dependencies using UV
-RUN uv sync --frozen
-
-# Copy application source code
+# Copy project files
+COPY pyproject.toml ./
 COPY src/ ./src/
 COPY .env* ./
+
+# Install dependencies from pyproject.toml at system level
+RUN pip install -e .
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' appuser && \
