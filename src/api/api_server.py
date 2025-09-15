@@ -5,7 +5,7 @@ Simple FastAPI-based REST API for the school agents system.
 Provides a single endpoint for interacting with StudyBuddy agent.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
@@ -15,6 +15,9 @@ import os
 from pathlib import Path
 from typing import Optional
 from dotenv import load_dotenv
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
 from google.genai import types
@@ -34,6 +37,9 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 from agents.studdy_buddy.agent import root_agent
+
+# Initialize rate limiter
+limiter = Limiter(key_func=get_remote_address)
 
 # Simple Request Model
 class QueryRequest(BaseModel):
@@ -64,6 +70,10 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
+# Add rate limiter to app
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -84,14 +94,15 @@ runner = Runner(
           summary="Query StudyBuddy Agent",
           description="Send a query to the StudyBuddy AI agent and get educational assistance.",
           response_description="Complete agent response with session information")
-async def process_query(request: QueryRequest):
+@limiter.limit("25/day")
+async def process_query(request: Request, query_request: QueryRequest):
     """Process query with StudyBuddy agent"""
     
     # Proper session management for context continuity
     # Use single consistent user_id for all students since this is educational API
     user_id = "student"
     
-    if not request.session_id:
+    if not query_request.session_id:
         # First request - create new session and return session_id for future requests
         session = await runner.session_service.create_session(
             app_name="School Agents API",
@@ -107,16 +118,16 @@ async def process_query(request: QueryRequest):
             existing_session = await runner.session_service.get_session(
                 app_name="School Agents API",
                 user_id=user_id,
-                session_id=request.session_id
+                session_id=query_request.session_id
             )
             if existing_session:
-                session_id = request.session_id
+                session_id = query_request.session_id
                 is_new_session = False
             else:
                 raise ValueError("Session returned None")
         except Exception as e:
             # Session doesn't exist, create new one
-            print(f"Session {request.session_id} not found, creating new one")
+            print(f"Session {query_request.session_id} not found, creating new one")
             session = await runner.session_service.create_session(
                 app_name="School Agents API",
                 user_id=user_id,
@@ -128,7 +139,7 @@ async def process_query(request: QueryRequest):
     # Create message content
     message = types.Content(
         role='user',
-        parts=[types.Part.from_text(text=request.query)]
+        parts=[types.Part.from_text(text=query_request.query)]
     )
     
     # Collect all events from the StudyBuddy agent
@@ -216,5 +227,6 @@ if __name__ == "__main__":
     print(f"📖 API Documentation: http://localhost:{port}/docs")
     print(f"🤖 Agent: StudyBuddy - Your AI Learning Companion")
     print(f"🔗 API Endpoint: http://localhost:{port}/query")
+    print(f"⚡ Rate Limit: 50 requests per day per IP")
     
     uvicorn.run(app, host="0.0.0.0", port=port)

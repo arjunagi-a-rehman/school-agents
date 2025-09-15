@@ -200,11 +200,21 @@ app.add_middleware(
 )
 ```
 
-### **The Main Query Endpoint:**
+### **The Main Query Endpoint with Rate Limiting:**
 
 ```python
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+# Initialize rate limiter
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 @app.post("/query")
-async def process_query(request: QueryRequest):
+@limiter.limit("50/day")  # Limit to 50 requests per day per IP
+async def process_query(request: Request, query_request: QueryRequest):
     """Process query with StudyBuddy agent"""
     
     # Session management (detailed above)
@@ -214,7 +224,7 @@ async def process_query(request: QueryRequest):
     # Create message for the agent
     message = types.Content(
         role='user',
-        parts=[types.Part.from_text(text=request.query)]
+        parts=[types.Part.from_text(text=query_request.query)]
     )
     
     # Get response from StudyBuddy
@@ -237,6 +247,31 @@ async def process_query(request: QueryRequest):
         "new_session": is_new_session,
         "message": "Use this session_id in your next request to maintain conversation context" if is_new_session else "Continuing conversation with existing context"
     }
+```
+
+### **Rate Limiting Protection:**
+
+We've added rate limiting to prevent API abuse:
+- **50 requests per day per IP address** on the `/query` endpoint
+- **Automatic blocking** when limit exceeded
+- **Clean error responses** when rate limit hit
+- **Memory-based tracking** (no external dependencies needed)
+
+**Rate Limiting Features:**
+```python
+# Different rate limit options you can use:
+@limiter.limit("50/day")        # 50 requests per day
+@limiter.limit("10/minute")     # 10 requests per minute  
+@limiter.limit("100/hour")      # 100 requests per hour
+@limiter.limit("5/second")      # 5 requests per second
+```
+
+**Add to pyproject.toml:**
+```toml
+dependencies = [
+    # ... other dependencies ...
+    "slowapi>=0.1.9",
+]
 ```
 
 ## 🔧 Running the API
