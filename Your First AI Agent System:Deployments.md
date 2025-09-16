@@ -393,81 +393,6 @@ ReactDOM.render(<ChatApp />, document.getElementById('root'));
 └─────────────────────┘
 ```
 
-### **Key UI Components:**
-
-Let's build the interface with focused, reusable components:
-
-#### **1. HTML Structure (src/api/templates/index.html):**
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyBuddy - Your AI Learning Companion</title>
-    <style>/* CSS styles here */</style>
-</head>
-<body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>🎓 StudyBuddy</h1>
-            <p>Your AI Learning Companion</p>
-        </div>
-        
-        <div class="chat-messages" id="chat-messages"></div>
-        
-        <div class="chat-input-container">
-            <textarea id="chat-input" placeholder="Ask StudyBuddy..."></textarea>
-            <button onclick="sendMessage()">➤</button>
-        </div>
-    </div>
-    <script>/* JavaScript here */</script>
-</body>
-</html>
-```
-
-#### **2. Message Bubble CSS:**
-```css
-.message {
-    display: flex;
-    gap: 12px;
-    max-width: 85%;
-}
-
-.message.user {
-    align-self: flex-end;
-    flex-direction: row-reverse;
-}
-
-.message.assistant {
-    align-self: flex-start;
-}
-
-.message-content {
-    padding: 12px 16px;
-    border-radius: 18px;
-    line-height: 1.4;
-}
-
-.message.user .message-content {
-    background: #007bff;
-    color: white;
-}
-
-.message.assistant .message-content {
-    background: #e9ecef;
-    color: #333;
-}
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-    .chat-container {
-        height: 100vh;
-        border-radius: 0;
-    }
-}
-```
-
-#### **3. Core JavaScript Functions:**
 ```javascript
 let sessionId = null;
 
@@ -793,7 +718,7 @@ The containerized app can be deployed to:
 - **DigitalOcean App Platform**: Connect GitHub repo
 
 #### **Self-Hosted:**
-- **Dokploy**: Docker-based deployment platform
+- **Dokploy**: Open-source Docker-based deployment platform (detailed below)
 - **Docker Swarm**: Multi-container orchestration
 - **Kubernetes**: For large-scale deployments
 - **VPS**: Any server with Docker installed
@@ -808,14 +733,92 @@ gcloud run deploy studybuddy \
   --set-env-vars GOOGLE_API_KEY="your-key"
 ```
 
-## 🚀 Production Deployment
+## 🌟 Dokploy: Open Source Self-Hosted Deployment
 
-Your StudyBuddy chat application is now fully containerized and ready for production deployment! The Docker setup ensures:
+**Dokploy** is a powerful, open-source alternative to Vercel/Netlify for self-hosted deployments. It's perfect for developers who want the convenience of PaaS with the control of self-hosting.
+
+**🔗 Official Website**: [dokploy.com](https://dokploy.com)  
+**🐙 GitHub Repository**: [github.com/Dokploy/dokploy](https://github.com/Dokploy/dokploy)
+
+### **Why Choose Dokploy?**
+
+- **100% Free**: No usage limits, no vendor lock-in
+- **Full Control**: Your data stays on your servers  
+- **Docker Native**: Built specifically for containerized applications
+- **Modern UI**: Clean web interface for managing deployments
+- **Git Integration**: Deploy directly from GitHub/GitLab
+- **SSL Automation**: Automatic HTTPS certificates via Let's Encrypt
+
+### **Complete Dokploy Tutorial**
+
+For a comprehensive step-by-step guide on setting up and deploying with Dokploy, watch this detailed tutorial:
+
+**📺 Watch Tutorial**: [https://youtu.be/ELkPcuO5ebo?si=3pRwAcjW9d4p3FgK](https://youtu.be/ELkPcuO5ebo?si=3pRwAcjW9d4p3FgK)
+
+This video covers everything from server setup to deployment, perfect for getting your StudyBuddy app live quickly and cost-effectively.
+
+### **Real-World Example**
+
+Our **StudyBuddy demo** is deployed using Dokploy:
+
+**🔗 Live Demo**: [https://study_buddy.chotuai.in/](https://study_buddy.chotuai.in/)  
+**📂 Source Code**: [https://github.com/arjunagi-a-rehman/school-agents/tree/function-calling](https://github.com/arjunagi-a-rehman/school-agents/tree/function-calling)
+
+Dokploy represents the **democratization of deployment tools** - making professional deployment accessible to everyone through open-source innovation.
+
+## 🚀 Production Deployment Summary
+
+Your StudyBuddy chat application is now fully containerized and ready for deployment anywhere! The Docker setup ensures:
 
 - **Consistent Environment**: Runs the same everywhere
-- **Easy Scaling**: Container orchestration support
+- **Easy Scaling**: Container orchestration support  
 - **Health Monitoring**: Built-in health checks
 - **Security**: Non-root user, minimal dependencies
 - **Fast Deployment**: Single command deployment to any platform
 
 The session management ensures your StudyBuddy maintains conversation context, making it feel like a natural tutoring experience rather than isolated Q&A interactions.
+
+## 🎯 What's Next: RAG (Retrieval Augmented Generation)
+
+Congratulations! 🎉 You've successfully built and deployed a complete AI agent system with:
+
+- ✅ **Custom Agent**: StudyBuddy with specialized tools
+- ✅ **Function Calling**: Math visualization and student management  
+- ✅ **REST API**: FastAPI with session management
+- ✅ **Modern UI**: Responsive chat interface
+- ✅ **Rate Limiting**: API protection and abuse prevention
+- ✅ **Containerization**: Docker deployment ready
+- ✅ **Live Deployment**: Production-ready with Dokploy
+
+But we're just getting started! 🚀
+
+### **Coming Next: RAG Implementation**
+
+In our next tutorial, we'll enhance StudyBuddy with **Retrieval Augmented Generation (RAG)** capabilities:
+
+**🧠 What is RAG?**
+- **Knowledge Base Integration**: Connect to external documents and data
+- **Semantic Search**: Find relevant information from your content
+- **Enhanced Responses**: AI responses backed by your specific knowledge
+- **Document Understanding**: Process PDFs, docs, websites, and databases
+
+**📚 What We'll Build:**
+- **StudyBuddy with Course Materials**: Upload textbooks, lecture notes, assignments
+- **Intelligent Document Search**: Find relevant content across all materials  
+- **Contextual Learning**: Answers grounded in your actual course content
+- **Citation Support**: AI responses with source references
+
+**🔧 Technologies We'll Explore:**
+- **Vector Databases**: Pinecone, Weaviate, or Chroma
+- **Embedding Models**: Text vectorization for semantic search
+- **Document Processing**: PDF parsing, text extraction, chunking
+- **Hybrid Search**: Combining keyword and semantic search
+
+This will transform StudyBuddy from a general AI tutor into a **personalized learning companion** that knows your specific course materials inside and out!
+
+**📖 Stay tuned for**: "Your First RAG System: Building Knowledge-Grounded AI Agents"
+
+---
+
+**Ready to deploy your StudyBuddy?** Use the links above to access the live demo and source code. Happy learning! 🎓
+

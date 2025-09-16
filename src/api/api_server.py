@@ -94,7 +94,7 @@ runner = Runner(
           summary="Query StudyBuddy Agent",
           description="Send a query to the StudyBuddy AI agent and get educational assistance.",
           response_description="Complete agent response with session information")
-@limiter.limit("25/day")
+@limiter.limit("250/day")
 async def process_query(request: Request, query_request: QueryRequest):
     """Process query with StudyBuddy agent"""
     
